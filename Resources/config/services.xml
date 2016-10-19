@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+                               http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="opositatest.report.data_fetcher.abandoned_carts.class">OpositaTest\Bundle\ReportBundle\DataFetcher\AbandonedCartsDataFetcher</parameter>
+        <parameter key="opositatest.report.data_fetcher.registration_time_purchase.class">OpositaTest\Bundle\ReportBundle\DataFetcher\RegistrationTimePurchaseDataFetcher</parameter>
+        <parameter key="opositatest.report.data_fetcher.sales_total_by_attribute.class">OpositaTest\Bundle\ReportBundle\DataFetcher\SalesTotalByAttributeDataFetcher</parameter>
+    </parameters>
+
+    <services>
+        <!-- 2. Carritos abandonados -->
+        <service id="opositatest.report.data_fetcher.abandoned_carts" class="%opositatest.report.data_fetcher.abandoned_carts.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <tag name="sylius.report.data_fetcher" fetcher="opositatest_data_fetcher_abandoned_carts" label="Abandoned Carts" />
+        </service>
+        <!-- 3. Tiempo medio Registracion/Compra -->
+        <service id="opositatest.report.data_fetcher.registration_time_purchase" class="%opositatest.report.data_fetcher.registration_time_purchase.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <tag name="sylius.report.data_fetcher" fetcher="opositatest_data_fetcher_registration_time_purchase" label="Registration/Purchase Time" />
+        </service>
+        <!-- 4. Compra de un tipo de producto -->
+        <service id="opositatest.report.data_fetcher.sales_total_by_attribute" class="%opositatest.report.data_fetcher.sales_total_by_attribute.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <tag name="sylius.report.data_fetcher" fetcher="opositatest_data_fetcher_sales_total_by_attribute" label="Sales Total By Attribute" />
+        </service>
+    </services>
+
+</container>

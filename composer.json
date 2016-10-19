@@ -1,0 +1,30 @@
+{
+    "name": "opositatest/report-bundle",
+    "type": "symfony-bundle",
+    "description": "Bundle to show statistics over a project ecommerce with sylius",
+    "keywords": ["report", "statistics", "opositatest", "symfony", "ecommerce", "sylius"],
+    "homepage": "http://opositatest.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Odiseo Team",
+            "homepage": "http://odiseo.com.ar"
+        }
+    ],
+    "require": {
+        "php": "^5.5.9|^7.0",
+
+        "sylius/sylius": "^0.18"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "^3.0",
+        "symfony/form": "^2.8",
+        "symfony/validator": "^2.8"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-4": { "OpositaTest\\Bundle\\ReportBundle\\": "" }
+    }
+}
