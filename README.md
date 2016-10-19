@@ -42,7 +42,7 @@ Now, go to the Report menu in the admin and you can choose some news Data Fetche
 MIT License
 -----------
 
-License can be found [here](https://github.com/opositatest/ReportBundle/blob/master/Resources/meta/LICENSE).
+License can be found [here](https://github.com/opositatest/ReportBundle/blob/master/LICENSE).
 
 Authors
 -------

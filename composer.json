@@ -27,6 +27,6 @@
     "autoload": {
         "psr-4": { "OpositaTest\\Bundle\\ReportBundle\\": "" }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "RC",
     "prefer-stable": true
 }
