@@ -16,8 +16,15 @@ $ php app/console sylius:install
 
 ### Step 2: Install the bundle via composer
 
-```bash
-$ composer require opositatest/report-bundle
+Add manually the following line to the `composer.json` file:
+
+``` json
+{
+    "require": {
+        // ...
+        "opositatest/report-bundle": "dev-master"
+    }
+}
 ```
 
 ### Step 3: Enable the bundle
