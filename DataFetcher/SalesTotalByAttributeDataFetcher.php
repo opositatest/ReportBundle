@@ -2,12 +2,8 @@
 
 namespace OpositaTest\Bundle\ReportBundle\DataFetcher;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\DBAL\Query\QueryBuilder;
 use OpositaTest\Bundle\ReportBundle\DataFetchers;
-use Sylius\Bundle\ReportBundle\DataFetcher\TimePeriod;
-use Sylius\Component\Core\Repository\OrderRepositoryInterface;
-use Sylius\Component\Order\Model\OrderInterface;
 
 /**
  * Número de compras de un tipo de producto (un producto puede tener un atributo
@@ -24,32 +20,40 @@ use Sylius\Component\Order\Model\OrderInterface;
 class SalesTotalByAttributeDataFetcher extends TimePeriod
 {
     /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @param EntityManager $entityManager
-     */
-    public function __construct(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function getData(array $configuration = [])
     {
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->orderRepository->createQueryBuilder('o');
+        $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
 
+        $baseCurrencyCode = $configuration['baseCurrency'] ? 'in '.$configuration['baseCurrency']->getCode() : '';
+        $attributeId = $configuration['attribute'];
+
+        $secondSelect = 'COUNT(o.id) as "Cantidad"';
+        if($configuration['viewMode'] == 'total')
+        {
+            $secondSelect = 'TRUNCATE(SUM(o.total * o.exchange_rate)/ 100,2) as "total sum '.$baseCurrencyCode.'"';
+        }
         $queryBuilder
-            ->andWhere('o.state = :state')
-            ->setParameter('state', OrderInterface::STATE_CART)
+            ->select('DATE(o.completed_at) as date', $secondSelect)
+            ->from('sylius_order', 'o')
+            ->leftJoin('o','sylius_order_item', 'oi', 'o.id = oi.order_id')
+            ->leftJoin( 'oi','sylius_product_variant', 'v', 'oi.variant_id = v.id')
+            ->leftJoin( 'v','sylius_product', 'p',  'v.product_id = p.id')
+            ->leftJoin( 'p','sylius_product_attribute_value', 'av',  'p.id = av.product_id')
+            ->leftJoin( 'av','sylius_product_attribute', 'a',  'a.id = av.attribute_id')
+            ->where('o.completed_at IS NOT null')
+            ->andWhere('a.id = :attributeId')
+            ->setParameter('attributeId', $attributeId)
         ;
 
-        return $queryBuilder->getQuery()->getArrayResult();
+        $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
+
+        return $queryBuilder
+            ->execute()
+            ->fetchAll()
+        ;
     }
 
     /**

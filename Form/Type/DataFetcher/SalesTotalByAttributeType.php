@@ -2,48 +2,62 @@
 
 namespace OpositaTest\Bundle\ReportBundle\Form\Type\DataFetcher;
 
-use Sylius\Bundle\CoreBundle\DataFetcher\NumberOfOrdersDataFetcher;
-use Sylius\Component\Core\Model\Product;
+use Doctrine\ORM\EntityRepository;
+use Sylius\Component\Product\Model\Attribute;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
  * @author Odiseo Team <team@odiseo.com.ar>
  */
-class SalesTotalByAttributeType extends AbstractType
+class SalesTotalByAttributeType extends TimePeriodType
 {
+    /**
+     * @var EntityRepository
+     */
+    protected $attributeRepository;
+
+    public function __construct(EntityRepository $attributeRepository)
+    {
+        $this->attributeRepository = $attributeRepository;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $attributes = $this->attributeRepository->findAll();
+
+        $attributeChoices = [];
+        /** @var Attribute $attribute */
+        foreach($attributes as $attribute)
+        {
+            $attributeChoices[$attribute->getId()] = $attribute->getName();
+        }
+
         $builder
-            ->add('attribute', 'choice', [
-                'choices' => array('atributo 1'),
+            ->add('attribute', ChoiceType::class, [
+                'choices' => $attributeChoices,
                 'multiple' => false,
                 'label' => 'Attribute',
             ])
-            ->add('start', 'date', [
-                'label' => 'sylius.form.report.user_registration.start',
+            ->add('viewMode', ChoiceType::class, [
+                'choices' => [
+                    'quantity' => 'Ver cantidades',
+                    'total' => 'Ver totales'
+                ],
+                'label' => 'Modo de vista',
             ])
-            ->add('end', 'date', [
-                'label' => 'sylius.form.report.user_registration.end',
-            ])
-            ->add('period', 'choice', [
-                'choices' => NumberOfOrdersDataFetcher::getPeriodChoices(),
-                'multiple' => false,
-                'label' => 'sylius.form.report.user_registration.period',
-            ])
-            ->add('empty_records', 'checkbox', [
-                'label' => 'sylius.form.report.user_registration.empty_records',
-                'required' => false,
-            ])
-            ->add('options', 'sylius_product_option_choice', [
-                'required' => false,
-                'multiple' => true,
-                'label' => 'sylius.form.product.options',
+            ->add('buyback', CheckboxType::class, [
+                'label' => 'Solo recompras?',
+                'required' => false
             ])
         ;
+
+        parent::buildForm($builder, $options);
     }
 
     /**

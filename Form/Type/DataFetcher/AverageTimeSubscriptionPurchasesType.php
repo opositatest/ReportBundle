@@ -3,13 +3,14 @@
 namespace OpositaTest\Bundle\ReportBundle\Form\Type\DataFetcher;
 
 use Sylius\Bundle\CoreBundle\DataFetcher\NumberOfOrdersDataFetcher;
+use Sylius\Component\Core\Model\Product;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
  * @author Odiseo Team <team@odiseo.com.ar>
  */
-class RegistrationTimePurchaseType extends TimePeriodType
+class AverageTimeSubscriptionPurchasesType extends TimePeriodType
 {
     /**
      * {@inheritdoc}
@@ -24,6 +25,6 @@ class RegistrationTimePurchaseType extends TimePeriodType
      */
     public function getName()
     {
-        return 'opositatest_data_fetcher_registration_time_purchase';
+        return 'opositatest_data_fetcher_average_time_subscription_purchases';
     }
 }

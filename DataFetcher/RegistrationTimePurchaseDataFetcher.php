@@ -3,9 +3,7 @@
 namespace OpositaTest\Bundle\ReportBundle\DataFetcher;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\ORM\EntityManager;
 use OpositaTest\Bundle\ReportBundle\DataFetchers;
-use Sylius\Bundle\ReportBundle\DataFetcher\TimePeriod;
 
 /**
  * Tiempo medio hasta la compra. Mostrar un gráfico de tiempo que calcula la
@@ -18,19 +16,6 @@ use Sylius\Bundle\ReportBundle\DataFetcher\TimePeriod;
  */
 class RegistrationTimePurchaseDataFetcher extends TimePeriod
 {
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @param EntityManager $entityManager
-     */
-    public function __construct(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -48,36 +33,7 @@ class RegistrationTimePurchaseDataFetcher extends TimePeriod
 
         $ordersCompleted = $queryBuilder->execute()->fetchAll();
 
-        if (empty($ordersCompleted)) {
-            return [];
-        }
-
-        $labels = array_keys($ordersCompleted[0]);
-
-        $datesMedia = array();
-        foreach($ordersCompleted as $orderCompleted)
-        {
-            $date = new \DateTime($orderCompleted[$labels[0]]);
-            $dateFormated = $date->format($configuration['presentationFormat']);
-
-            $currentDateMedia = isset($datesMedia[$dateFormated])?$datesMedia[$dateFormated]:array('quantity' => 0, 'media' => 0);
-
-            $currentDateMedia['quantity'] = $currentDateMedia['quantity']+1;
-            $currentDateMedia['media'] = $currentDateMedia['media']+$orderCompleted[$labels[1]];
-
-            $datesMedia[$dateFormated] = $currentDateMedia;
-        }
-
-        $fetched = [];
-        foreach($datesMedia as $date => $dateMedia)
-        {
-            $fetched[] = [
-                $labels[0] => $date,
-                $labels[1] => round($dateMedia['media']/$dateMedia['quantity'], 1)
-            ];
-        }
-
-        return $fetched;
+        return $this->getMediaResults($ordersCompleted, $configuration);
     }
 
     /**

@@ -3,9 +3,7 @@
 namespace OpositaTest\Bundle\ReportBundle\DataFetcher;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\ORM\EntityManager;
 use OpositaTest\Bundle\ReportBundle\DataFetchers;
-use Sylius\Bundle\ReportBundle\DataFetcher\TimePeriod;
 use Sylius\Component\Order\Model\OrderInterface;
 
 /**
@@ -19,31 +17,11 @@ use Sylius\Component\Order\Model\OrderInterface;
 class AbandonedCartsDataFetcher extends TimePeriod
 {
     /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @param EntityManager $entityManager
-     */
-    public function __construct(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function getData(array $configuration = [])
     {
-        $groupBy = '';
-
-        foreach ($configuration['groupBy'] as $groupByElement) {
-            $groupBy = $groupByElement.'(date)'.' '.$groupBy;
-        }
-
-        $groupBy = substr($groupBy, 0, -1);
-        $groupBy = str_replace(' ', ', ', $groupBy);
+        $groupBy = $this->getGroupBy($configuration);
 
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();

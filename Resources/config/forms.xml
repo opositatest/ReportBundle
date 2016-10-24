@@ -9,6 +9,8 @@
         <parameter key="opositatest.form.type.data_fetcher.abandoned_carts.class">OpositaTest\Bundle\ReportBundle\Form\Type\DataFetcher\AbandonedCartsType</parameter>
         <parameter key="opositatest.form.type.data_fetcher.registration_time_purchase.class">OpositaTest\Bundle\ReportBundle\Form\Type\DataFetcher\RegistrationTimePurchaseType</parameter>
         <parameter key="opositatest.form.type.data_fetcher.sales_total_by_attribute.class">OpositaTest\Bundle\ReportBundle\Form\Type\DataFetcher\SalesTotalByAttributeType</parameter>
+        <parameter key="opositatest.form.type.data_fetcher.sales_total.class">OpositaTest\Bundle\ReportBundle\Form\Type\DataFetcher\SalesTotalType</parameter>
+        <parameter key="opositatest.form.type.data_fetcher.average_time_subscription_purchases.class">OpositaTest\Bundle\ReportBundle\Form\Type\DataFetcher\AverageTimeSubscriptionPurchasesType</parameter>
     </parameters>
 
     <services>
@@ -20,9 +22,18 @@
         <service id="opositatest.form.type.data_fetcher.registration_time_purchase" class="%opositatest.form.type.data_fetcher.registration_time_purchase.class%">
             <tag name="form.type" alias="opositatest_data_fetcher_registration_time_purchase" />
         </service>
-        <!-- 4. Compra de un tipo de producto -->
+        <!-- 4. Compra de un tipo de producto por atributo -->
         <service id="opositatest.form.type.data_fetcher.sales_total_by_attribute" class="%opositatest.form.type.data_fetcher.sales_total_by_attribute.class%">
+            <argument type="service" id="sylius.repository.product_attribute" />
             <tag name="form.type" alias="opositatest_data_fetcher_sales_total_by_attribute" />
+        </service>
+        <!-- 6. Sales total -->
+        <service id="opositatest.form.type.data_fetcher.sales_total" class="%opositatest.form.type.data_fetcher.sales_total.class%">
+            <tag name="form.type" alias="opositatest_data_fetcher_sales_total" />
+        </service>
+        <!-- 7. Tiempo medio de suscripcion de todas las compras -->
+        <service id="opositatest.form.type.data_fetcher.average_time_subscription_purchases" class="%opositatest.form.type.data_fetcher.average_time_subscription_purchases.class%">
+            <tag name="form.type" alias="opositatest_data_fetcher_average_time_subscription_purchases" />
         </service>
     </services>
 
