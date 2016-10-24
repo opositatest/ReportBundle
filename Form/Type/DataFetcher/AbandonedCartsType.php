@@ -2,7 +2,6 @@
 
 namespace Opos\Bundle\ReportBundle\Form\Type\DataFetcher;
 
-use Sylius\Bundle\CoreBundle\DataFetcher\NumberOfOrdersDataFetcher;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
