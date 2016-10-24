@@ -2,11 +2,25 @@
 
 namespace Opos\Bundle\ReportBundle\DataFetcher;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 use Opos\Bundle\ReportBundle\DataFetchers;
 
 class AverageTimeSubscriptionPurchasesDataFetcher extends TimePeriod
 {
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
+
+    /**
+     * @param EntityManager $entityManager
+     */
+    public function __construct(EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -14,6 +28,8 @@ class AverageTimeSubscriptionPurchasesDataFetcher extends TimePeriod
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
+
+        $attributeId = $configuration['attribute'];
 
         $queryBuilder
             ->select('DATE(o.completed_at) as date', 'av.integer_value as "Subscription Time"')
@@ -24,9 +40,26 @@ class AverageTimeSubscriptionPurchasesDataFetcher extends TimePeriod
             ->leftJoin( 'p','sylius_product_attribute_value', 'av',  'p.id = av.product_id')
             ->leftJoin( 'av','sylius_product_attribute', 'a',  'a.id = av.attribute_id')
             ->where('o.completed_at IS NOT null')
-            ->where('a.code = "suscripcion"')
-            ->where('av.integer_value IS NOT null')
+            ->andWhere('a.code = "suscripcion"')
+            ->andWhere('av.integer_value IS NOT null')
         ;
+        foreach($configuration['taxons'] as $taxon)
+        {
+            $queryBuilder
+                ->andWhere('p.main_taxon_id = :id')
+                ->setParameter('id',$taxon->getId())
+            ;
+        }
+        if(isset($attributeId))
+        {
+            $queryBuilder
+                ->andWhere('a.id = :attributeId')
+                ->setParameter('attributeId', $attributeId)
+            ;
+        }
+
+        $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
+
         $ordersCompleted = $queryBuilder->execute()->fetchAll();
 
         if (empty($ordersCompleted)) {
