@@ -1,6 +1,6 @@
 <?php
 
-namespace OpositaTest\Bundle\ReportBundle\Form\Type\DataFetcher;
+namespace Opos\Bundle\ReportBundle\Form\Type\DataFetcher;
 
 use Doctrine\ORM\EntityRepository;
 use Sylius\Component\Product\Model\Attribute;
@@ -65,6 +65,6 @@ class SalesTotalByAttributeType extends TimePeriodType
      */
     public function getName()
     {
-        return 'opositatest_data_fetcher_sales_total_by_attribute';
+        return 'opos_data_fetcher_sales_total_by_attribute';
     }
 }

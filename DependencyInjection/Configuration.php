@@ -1,6 +1,6 @@
 <?php
 
-namespace OpositaTest\Bundle\ReportBundle\DependencyInjection;
+namespace Opos\Bundle\ReportBundle\DependencyInjection;
 
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -22,7 +22,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('opositatest_report');
+        $rootNode = $treeBuilder->root('opos_report');
 
         $rootNode
             ->addDefaultsIfNotSet()

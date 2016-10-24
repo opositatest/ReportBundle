@@ -25,6 +25,6 @@
         "bin-dir": "bin"
     },
     "autoload": {
-        "psr-4": { "OpositaTest\\Bundle\\ReportBundle\\": "" }
+        "psr-4": { "Opos\\Bundle\\ReportBundle\\": "" }
     }
 }

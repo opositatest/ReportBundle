@@ -1,6 +1,6 @@
 <?php
 
-namespace OpositaTest\Bundle\ReportBundle;
+namespace Opos\Bundle\ReportBundle;
 
 /**
  * Data fetchers.
@@ -9,9 +9,9 @@ namespace OpositaTest\Bundle\ReportBundle;
  */
 final class DataFetchers
 {
-    const ABANDONED_CARTS = 'opositatest_data_fetcher_abandoned_carts';
-    const REGISTRATION_TIME_PURCHASE = 'opositatest_data_fetcher_registration_time_purchase';
-    const SALES_TOTAL_BY_ATTRIBUTE = 'opositatest_data_fetcher_sales_total_by_attribute';
-    const SALES_TOTAL = 'opositatest_data_fetcher_sales_total';
-    const AVERAGE_TIME_SUBSCRIPTION_PURCHASES = 'opositatest_data_fetcher_average_time_subscription_purchases';
+    const ABANDONED_CARTS = 'opos_data_fetcher_abandoned_carts';
+    const REGISTRATION_TIME_PURCHASE = 'opos_data_fetcher_registration_time_purchase';
+    const SALES_TOTAL_BY_ATTRIBUTE = 'opos_data_fetcher_sales_total_by_attribute';
+    const SALES_TOTAL = 'opos_data_fetcher_sales_total';
+    const AVERAGE_TIME_SUBSCRIPTION_PURCHASES = 'opos_data_fetcher_average_time_subscription_purchases';
 }

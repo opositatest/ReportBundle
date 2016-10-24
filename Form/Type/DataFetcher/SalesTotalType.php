@@ -1,6 +1,6 @@
 <?php
 
-namespace OpositaTest\Bundle\ReportBundle\Form\Type\DataFetcher;
+namespace Opos\Bundle\ReportBundle\Form\Type\DataFetcher;
 
 use Sylius\Bundle\CoreBundle\DataFetcher\NumberOfOrdersDataFetcher;
 use Sylius\Component\Core\Model\Product;
@@ -32,6 +32,6 @@ class SalesTotalType extends TimePeriodType
      */
     public function getName()
     {
-        return 'opositatest_data_fetcher_sales_total';
+        return 'opos_data_fetcher_sales_total';
     }
 }

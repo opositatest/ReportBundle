@@ -1,6 +1,6 @@
 <?php
 
-namespace OpositaTest\Bundle\ReportBundle\DependencyInjection;
+namespace Opos\Bundle\ReportBundle\DependencyInjection;
 
 use Sylius\Bundle\ResourceBundle\DependencyInjection\Extension\AbstractResourceExtension;
 use Symfony\Component\Config\FileLocator;
@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @author Odiseo Team <team@odiseo.com.ar>
  */
-class OpositaTestReportExtension extends AbstractResourceExtension
+class OposReportExtension extends AbstractResourceExtension
 {
     /**
      * {@inheritdoc}

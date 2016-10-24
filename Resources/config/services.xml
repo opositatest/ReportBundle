@@ -6,38 +6,38 @@
                                http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="opositatest.report.data_fetcher.abandoned_carts.class">OpositaTest\Bundle\ReportBundle\DataFetcher\AbandonedCartsDataFetcher</parameter>
-        <parameter key="opositatest.report.data_fetcher.registration_time_purchase.class">OpositaTest\Bundle\ReportBundle\DataFetcher\RegistrationTimePurchaseDataFetcher</parameter>
-        <parameter key="opositatest.report.data_fetcher.sales_total_by_attribute.class">OpositaTest\Bundle\ReportBundle\DataFetcher\SalesTotalByAttributeDataFetcher</parameter>
-        <parameter key="opositatest.report.data_fetcher.sales_total.class">OpositaTest\Bundle\ReportBundle\DataFetcher\SalesTotalDataFetcher</parameter>
-        <parameter key="opositatest.report.data_fetcher.average_time_subscription_purchases.class">OpositaTest\Bundle\ReportBundle\DataFetcher\AverageTimeSubscriptionPurchasesDataFetcher</parameter>
+        <parameter key="opos.report.data_fetcher.abandoned_carts.class">Opos\Bundle\ReportBundle\DataFetcher\AbandonedCartsDataFetcher</parameter>
+        <parameter key="opos.report.data_fetcher.registration_time_purchase.class">Opos\Bundle\ReportBundle\DataFetcher\RegistrationTimePurchaseDataFetcher</parameter>
+        <parameter key="opos.report.data_fetcher.sales_total_by_attribute.class">Opos\Bundle\ReportBundle\DataFetcher\SalesTotalByAttributeDataFetcher</parameter>
+        <parameter key="opos.report.data_fetcher.sales_total.class">Opos\Bundle\ReportBundle\DataFetcher\SalesTotalDataFetcher</parameter>
+        <parameter key="opos.report.data_fetcher.average_time_subscription_purchases.class">Opos\Bundle\ReportBundle\DataFetcher\AverageTimeSubscriptionPurchasesDataFetcher</parameter>
     </parameters>
 
     <services>
         <!-- 2. Carritos abandonados -->
-        <service id="opositatest.report.data_fetcher.abandoned_carts" class="%opositatest.report.data_fetcher.abandoned_carts.class%">
+        <service id="opos.report.data_fetcher.abandoned_carts" class="%opos.report.data_fetcher.abandoned_carts.class%">
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <tag name="sylius.report.data_fetcher" fetcher="opositatest_data_fetcher_abandoned_carts" label="Abandoned Carts" />
+            <tag name="sylius.report.data_fetcher" fetcher="opos_data_fetcher_abandoned_carts" label="Abandoned Carts" />
         </service>
         <!-- 3. Tiempo medio Registracion/Compra -->
-        <service id="opositatest.report.data_fetcher.registration_time_purchase" class="%opositatest.report.data_fetcher.registration_time_purchase.class%">
+        <service id="opos.report.data_fetcher.registration_time_purchase" class="%opos.report.data_fetcher.registration_time_purchase.class%">
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <tag name="sylius.report.data_fetcher" fetcher="opositatest_data_fetcher_registration_time_purchase" label="Registration/Purchase Time" />
+            <tag name="sylius.report.data_fetcher" fetcher="opos_data_fetcher_registration_time_purchase" label="Registration/Purchase Time" />
         </service>
         <!-- 4. Compra de un tipo de producto -->
-        <service id="opositatest.report.data_fetcher.sales_total_by_attribute" class="%opositatest.report.data_fetcher.sales_total_by_attribute.class%">
+        <service id="opos.report.data_fetcher.sales_total_by_attribute" class="%opos.report.data_fetcher.sales_total_by_attribute.class%">
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <tag name="sylius.report.data_fetcher" fetcher="opositatest_data_fetcher_sales_total_by_attribute" label="Sales Total By Attribute" />
+            <tag name="sylius.report.data_fetcher" fetcher="opos_data_fetcher_sales_total_by_attribute" label="Sales Total By Attribute" />
         </service>
         <!-- 6. Sales total -->
-        <service id="opositatest.report.data_fetcher.sales_total" class="%opositatest.report.data_fetcher.sales_total.class%">
+        <service id="opos.report.data_fetcher.sales_total" class="%opos.report.data_fetcher.sales_total.class%">
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <tag name="sylius.report.data_fetcher" fetcher="opositatest_data_fetcher_sales_total" label="Sales Total With Iva" />
+            <tag name="sylius.report.data_fetcher" fetcher="opos_data_fetcher_sales_total" label="Sales Total With Iva" />
         </service>
         <!-- 7. Tiempo medio de suscripcion de todas las compras -->
-        <service id="opositatest.report.data_fetcher.average_time_subscription_purchases" class="%opositatest.report.data_fetcher.average_time_subscription_purchases.class%">
+        <service id="opos.report.data_fetcher.average_time_subscription_purchases" class="%opos.report.data_fetcher.average_time_subscription_purchases.class%">
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <tag name="sylius.report.data_fetcher" fetcher="opositatest_data_fetcher_average_time_subscription_purchases" label="Average time of subscription of all purchases" />
+            <tag name="sylius.report.data_fetcher" fetcher="opos_data_fetcher_average_time_subscription_purchases" label="Average time of subscription of all purchases" />
         </service>
     </services>
 

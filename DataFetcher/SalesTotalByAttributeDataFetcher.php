@@ -1,9 +1,9 @@
 <?php
 
-namespace OpositaTest\Bundle\ReportBundle\DataFetcher;
+namespace Opos\Bundle\ReportBundle\DataFetcher;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use OpositaTest\Bundle\ReportBundle\DataFetchers;
+use Opos\Bundle\ReportBundle\DataFetchers;
 
 /**
  * Número de compras de un tipo de producto (un producto puede tener un atributo

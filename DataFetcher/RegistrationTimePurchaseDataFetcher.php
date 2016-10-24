@@ -1,9 +1,9 @@
 <?php
 
-namespace OpositaTest\Bundle\ReportBundle\DataFetcher;
+namespace Opos\Bundle\ReportBundle\DataFetcher;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use OpositaTest\Bundle\ReportBundle\DataFetchers;
+use Opos\Bundle\ReportBundle\DataFetchers;
 
 /**
  * Tiempo medio hasta la compra. Mostrar un gráfico de tiempo que calcula la

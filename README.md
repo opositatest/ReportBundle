@@ -1,4 +1,4 @@
-OpositaTestReportBundle
+OposReportBundle
 =======================
 
 Bundle to show statistics over a project ecommerce with Sylius.
@@ -39,7 +39,7 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new OpositaTest\Bundle\ReportBundle\OpositaTestReportBundle(),
+        new Opos\Bundle\ReportBundle\OposReportBundle(),
     );
 }
 ```

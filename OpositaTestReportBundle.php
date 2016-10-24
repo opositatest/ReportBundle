@@ -1,6 +1,6 @@
 <?php
 
-namespace OpositaTest\Bundle\ReportBundle;
+namespace Opos\Bundle\ReportBundle;
 
 use Sylius\Bundle\ReportBundle\DependencyInjection\Compiler\RegisterDataFetcherPass;
 use Sylius\Bundle\ReportBundle\DependencyInjection\Compiler\RegisterRenderersPass;
@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  *
  * @author Odiseo Team <team@odiseo.com.ar>
  */
-class OpositaTestReportBundle extends AbstractResourceBundle
+class OposReportBundle extends AbstractResourceBundle
 {
     /**
      * {@inheritdoc}
@@ -41,6 +41,6 @@ class OpositaTestReportBundle extends AbstractResourceBundle
      */
     protected function getModelNamespace()
     {
-        return 'OpositaTest\Bundle\ReportBundle\Model';
+        return 'Opos\Bundle\ReportBundle\Model';
     }
 }

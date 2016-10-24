@@ -1,6 +1,6 @@
 <?php
 
-namespace OpositaTest\Bundle\ReportBundle\Form\Type\DataFetcher;
+namespace Opos\Bundle\ReportBundle\Form\Type\DataFetcher;
 
 use Sylius\Bundle\CoreBundle\DataFetcher\NumberOfOrdersDataFetcher;
 use Symfony\Component\Form\AbstractType;
@@ -24,6 +24,6 @@ class AbandonedCartsType extends TimePeriodType
      */
     public function getName()
     {
-        return 'opositatest_data_fetcher_abandoned_carts';
+        return 'opos_data_fetcher_abandoned_carts';
     }
 }
