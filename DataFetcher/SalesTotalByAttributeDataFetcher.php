@@ -24,36 +24,87 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
      */
     protected function getData(array $configuration = [])
     {
+        $attributeId = $configuration['attribute'];
+        $buyback = $configuration['buyback'];
+
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
 
         $baseCurrencyCode = $configuration['baseCurrency'] ? 'in '.$configuration['baseCurrency']->getCode() : '';
-        $attributeId = $configuration['attribute'];
-
         $secondSelect = 'COUNT(o.id) as "Cantidad"';
         if($configuration['viewMode'] == 'total')
         {
-            $secondSelect = 'TRUNCATE(SUM(o.total * o.exchange_rate)/ 100,2) as "total sum '.$baseCurrencyCode.'"';
+            $secondSelect = 'TRUNCATE((o.total * o.exchange_rate)/100,2) as "total sum '.$baseCurrencyCode.'"';
         }
+
         $queryBuilder
             ->select('DATE(o.completed_at) as date', $secondSelect)
-            ->from('sylius_order', 'o')
-            ->leftJoin('o','sylius_order_item', 'oi', 'o.id = oi.order_id')
-            ->leftJoin( 'oi','sylius_product_variant', 'v', 'oi.variant_id = v.id')
-            ->leftJoin( 'v','sylius_product', 'p',  'v.product_id = p.id')
-            ->leftJoin( 'p','sylius_product_attribute_value', 'av',  'p.id = av.product_id')
-            ->leftJoin( 'av','sylius_product_attribute', 'a',  'a.id = av.attribute_id')
-            ->where('o.completed_at IS NOT null')
-            ->andWhere('a.id = :attributeId')
-            ->setParameter('attributeId', $attributeId)
         ;
 
+        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributeId);
         $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
+
+        if($buyback)
+        {
+            // Fetch the orders by attribute
+            $ordersFetched = $this->getBuybackOrdersWithAttribute($configuration);
+            $queryBuilder->andWhere($queryBuilder->expr()->in('o.id', $ordersFetched));
+        }
 
         return $queryBuilder
             ->execute()
             ->fetchAll()
         ;
+    }
+
+    protected function getBuybackOrdersWithAttribute(array $configuration = [])
+    {
+        $attributeId = $configuration['attribute'];
+
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
+
+        //Get the orders to verify wich is a buyback
+        $queryBuilder
+            ->select('o.id as O_ID', 'c.id as C_ID', 'p.id P_ID')
+            ->andWhere($queryBuilder->expr()->gte('o.completed_at', ':from'))
+            ->andWhere($queryBuilder->expr()->lte('o.completed_at', ':to'))
+            ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
+            ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
+        ;
+        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributeId);
+        $orders = $queryBuilder->execute()->fetchAll();
+
+        $ordersFetched = [];
+        $productBuybacks = [];
+        foreach($orders as $order)
+        {
+            $value = $order['C_ID'].'_'.$order['P_ID'];
+            if(in_array($value, $productBuybacks))
+            {
+                $ordersFetched[] = $order['O_ID'];
+            }
+            $productBuybacks[] = $value;
+        }
+
+        return $ordersFetched;
+    }
+
+    protected function addQueriesByAttributeId(QueryBuilder $queryBuilder, $attributeId)
+    {
+        $queryBuilder
+            ->from('sylius_order', 'o')
+            ->leftJoin('o','sylius_customer', 'c', 'c.id = o.customer_id')
+            ->leftJoin('o','sylius_order_item', 'oi', 'o.id = oi.order_id')
+            ->leftJoin( 'oi','sylius_product_variant', 'v', 'oi.variant_id = v.id')
+            ->leftJoin( 'v','sylius_product', 'p',  'v.product_id = p.id')
+            ->leftJoin( 'p','sylius_product_attribute_value', 'av',  'p.id = av.product_id')
+            ->leftJoin( 'av','sylius_product_attribute', 'a',  'a.id = av.attribute_id')
+            ->andWhere('o.completed_at IS NOT null')
+            ->andWhere('a.id = :attributeId')
+            ->setParameter('attributeId', $attributeId);
+
+        return $queryBuilder;
     }
 
     /**
