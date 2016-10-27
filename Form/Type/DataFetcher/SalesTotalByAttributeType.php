@@ -3,6 +3,7 @@
 namespace Opos\Bundle\ReportBundle\Form\Type\DataFetcher;
 
 use Doctrine\ORM\EntityRepository;
+use Sylius\Component\Attribute\Model\AttributeValue;
 use Sylius\Component\Product\Model\Attribute;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -35,7 +36,14 @@ class SalesTotalByAttributeType extends TimePeriodType
         /** @var Attribute $attribute */
         foreach($attributes as $attribute)
         {
-            $attributeChoices[$attribute->getId()] = $attribute->getName();
+            $valuesAtrribute = array();
+            /** @var AttributeValue $attributeValue */
+            foreach($attribute->getValues() as $attributeValue)
+            {
+                $valuesAtrribute[$attributeValue->getId()] = $attributeValue->getValue();
+            }
+
+            $attributeChoices[$attribute->getName()] = $valuesAtrribute;
         }
 
         $builder

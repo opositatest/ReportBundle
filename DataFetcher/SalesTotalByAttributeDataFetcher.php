@@ -24,7 +24,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
      */
     protected function getData(array $configuration = [])
     {
-        $attributeId = $configuration['attribute'];
+        $attributeValueId = $configuration['attribute'];
         $buyback = $configuration['buyback'];
 
         /** @var QueryBuilder $queryBuilder */
@@ -41,7 +41,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->select('DATE(o.completed_at) as date', $secondSelect)
         ;
 
-        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributeId);
+        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributeValueId);
         $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
 
         if($buyback)
@@ -59,7 +59,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
 
     protected function getBuybackOrdersWithAttribute(array $configuration = [])
     {
-        $attributeId = $configuration['attribute'];
+        $attributeValueId = $configuration['attribute'];
 
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
@@ -72,7 +72,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
             ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
         ;
-        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributeId);
+        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributeValueId);
         $orders = $queryBuilder->execute()->fetchAll();
 
         $ordersFetched = [];
@@ -90,7 +90,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         return $ordersFetched;
     }
 
-    protected function addQueriesByAttributeId(QueryBuilder $queryBuilder, $attributeId)
+    protected function addQueriesByAttributeId(QueryBuilder $queryBuilder, $attributeValueId)
     {
         $queryBuilder
             ->from('sylius_order', 'o')
@@ -101,8 +101,8 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->leftJoin( 'p','sylius_product_attribute_value', 'av',  'p.id = av.product_id')
             ->leftJoin( 'av','sylius_product_attribute', 'a',  'a.id = av.attribute_id')
             ->andWhere('o.completed_at IS NOT null')
-            ->andWhere('a.id = :attributeId')
-            ->setParameter('attributeId', $attributeId);
+            ->andWhere('av.id = :attributeId')
+            ->setParameter('attributeId', $attributeValueId);
 
         return $queryBuilder;
     }

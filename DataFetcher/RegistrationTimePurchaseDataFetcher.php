@@ -25,11 +25,15 @@ class RegistrationTimePurchaseDataFetcher extends TimePeriod
         $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
 
         $queryBuilder
-            ->select('DATE(o.completed_at) as date', 'DATEDIFF(DATE(o.completed_at), DATE(c.created_at)) as "Tiempo medio hasta la compra"')
+            ->select('DATE(min(o.completed_at)) as date', 'DATEDIFF(DATE(o.completed_at), DATE(c.created_at)) as "Tiempo medio hasta la compra"')
             ->from('sylius_customer', 'c')
-            ->leftJoin('c', 'sylius_order', 'o', 'o.customer_id = c.id')
+            ->innerJoin('c', 'sylius_order', 'o', 'o.customer_id = c.id')
             ->where('o.completed_at IS NOT null')
+            ->orderBy('o.completed_at','ASC')
+            ->groupBy('c.id')
         ;
+
+       // $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
 
         $ordersCompleted = $queryBuilder->execute()->fetchAll();
 

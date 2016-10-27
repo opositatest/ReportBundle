@@ -29,13 +29,15 @@ class SalesTotalDataFetcher extends TimePeriod
             ->where('o.completed_at IS NOT null')
         ;
 
-        $productsPrice = $queryBuilder->execute()->fetchAll();
+        $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
 
-        if (empty($productsPrice)) {
+        $ordersCompleted = $queryBuilder->execute()->fetchAll();
+
+        if (empty($ordersCompleted)) {
             return [];
         }
 
-        $labels = array_keys($productsPrice[0]);
+        $labels = array_keys($ordersCompleted[0]);
 
         $ivaTax = 0;
         if(($configuration['iva']))
@@ -44,14 +46,14 @@ class SalesTotalDataFetcher extends TimePeriod
         }
 
         $productPriceTotal = array();
-        foreach($productsPrice as $productPrice)
+        foreach($ordersCompleted as $orderCompleted)
         {
-            $date = new \DateTime($productPrice[$labels[0]]);
+            $date = new \DateTime($orderCompleted[$labels[0]]);
             $dateFormated = $date->format($configuration['presentationFormat']);
 
             $currentProductPrice = isset($productPriceTotal[$dateFormated])?$productPriceTotal[$dateFormated]:array('price' => 0);
 
-            $currentProductPrice['price'] = $currentProductPrice['price']+$productPrice[$labels[1]];
+            $currentProductPrice['price'] = $currentProductPrice['price']+$orderCompleted[$labels[1]];
 
             $productPriceTotal[$dateFormated] = $currentProductPrice;
         }
