@@ -43,13 +43,13 @@ class SalesTotalByAttributeType extends TimePeriodType
                 $valuesAtrribute[$attributeValue->getId()] = $attributeValue->getValue();
             }
 
-            $attributeChoices[$attribute->getName()] = $valuesAtrribute;
+            $attributeChoices[$attribute->getCode()] = $valuesAtrribute;
         }
 
         $builder
-            ->add('attribute', ChoiceType::class, [
+            ->add('attributes', ChoiceType::class, [
                 'choices' => $attributeChoices,
-                'multiple' => false,
+                'multiple' => true,
                 'label' => 'Attribute',
             ])
             ->add('viewMode', ChoiceType::class, [

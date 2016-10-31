@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 /**
  * @author Odiseo Team <team@odiseo.com.ar>
  */
-class AverageTimeSubscriptionPurchasesType extends TimePeriodType
+class AverageValueByProductPurchasesType extends TimePeriodType
 {
     /**
      * @var EntityRepository
@@ -35,9 +35,9 @@ class AverageTimeSubscriptionPurchasesType extends TimePeriodType
         /** @var Attribute $attribute */
         foreach($attributes as $attribute)
         {
-            $attributeChoices[$attribute->getId()] = $attribute->getName();
+            if($attribute->getType() == 'integer')
+            $attributeChoices[$attribute->getId()] = $attribute->getCode();
         }
-
         parent::buildForm($builder, $options);
         $builder
             ->add('taxons', 'sylius_taxon_choice', [
@@ -45,10 +45,10 @@ class AverageTimeSubscriptionPurchasesType extends TimePeriodType
                 'multiple' => true,
                 'label' => 'sylius.form.product.taxons',
             ])
-            ->add('attribute', ChoiceType::class, [
+            ->add('attributes', ChoiceType::class, [
                 'choices' => $attributeChoices,
-                'multiple' => false,
-                'required' => false,
+                'multiple' => true,
+                'required' => true,
                 'label' => 'Attribute',
                 'placeholder' => 'Choose attribute',
                 'empty_data'  => null
@@ -61,6 +61,6 @@ class AverageTimeSubscriptionPurchasesType extends TimePeriodType
      */
     public function getName()
     {
-        return 'opos_data_fetcher_average_time_subscription_purchases';
+        return 'opos_data_fetcher_average_value_by_product_purchases';
     }
 }

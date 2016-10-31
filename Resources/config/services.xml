@@ -10,7 +10,7 @@
         <parameter key="opos.report.data_fetcher.registration_time_purchase.class">Opos\Bundle\ReportBundle\DataFetcher\RegistrationTimePurchaseDataFetcher</parameter>
         <parameter key="opos.report.data_fetcher.sales_total_by_attribute.class">Opos\Bundle\ReportBundle\DataFetcher\SalesTotalByAttributeDataFetcher</parameter>
         <parameter key="opos.report.data_fetcher.sales_total.class">Opos\Bundle\ReportBundle\DataFetcher\SalesTotalDataFetcher</parameter>
-        <parameter key="opos.report.data_fetcher.average_time_subscription_purchases.class">Opos\Bundle\ReportBundle\DataFetcher\AverageTimeSubscriptionPurchasesDataFetcher</parameter>
+        <parameter key="opos.report.data_fetcher.average_value_by_product_purchases.class">Opos\Bundle\ReportBundle\DataFetcher\AverageValueByProductPurchasesDataFetcher</parameter>
     </parameters>
 
     <services>
@@ -34,10 +34,10 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <tag name="sylius.report.data_fetcher" fetcher="opos_data_fetcher_sales_total" label="Sales Total With Iva" />
         </service>
-        <!-- 7. Tiempo medio de suscripcion de todas las compras -->
-        <service id="opos.report.data_fetcher.average_time_subscription_purchases" class="%opos.report.data_fetcher.average_time_subscription_purchases.class%">
+        <!-- 7. Tiempo medio por producto de todas las compras -->
+        <service id="opos.report.data_fetcher.average_value_by_product_purchases" class="%opos.report.data_fetcher.average_value_by_product_purchases.class%">
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <tag name="sylius.report.data_fetcher" fetcher="opos_data_fetcher_average_time_subscription_purchases" label="Average time of subscription of all purchases" />
+            <tag name="sylius.report.data_fetcher" fetcher="opos_data_fetcher_average_value_by_product_purchases" label="Average value by product of all purchases" />
         </service>
     </services>
 

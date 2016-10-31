@@ -8,9 +8,7 @@ use Sylius\Component\Order\Model\OrderInterface;
 
 /**
  * Un usuario que no completa el pago, es un carrito abandonado y queda en la base
- * de datos como pendiente. Mostrar el número y porcentaje de carritos abandonados.
- *
- * Ejemplo: 20% de los carritos han sido abandonado el mes de Enero de 2016
+ * de datos como pendiente. Muestra el número y porcentaje de carritos abandonados.
  *
  * @author Odiseo Team <team@odiseo.com.ar>
  */
@@ -23,12 +21,18 @@ class AbandonedCartsDataFetcher extends TimePeriod
     {
         $groupBy = $this->getGroupBy($configuration);
 
+        $showByQuantity = $configuration['showByQuantity'];
+
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
 
         $queryBuilder
             ->select('DATE(o.created_at) as date', 'COUNT(o.id) as "Abandoned carts"')
             ->from('sylius_order', 'o')
+            ->andWhere($queryBuilder->expr()->gte('o.created_at', ':from'))
+            ->andWhere($queryBuilder->expr()->lte('o.created_at', ':to'))
+            ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
+            ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
             ->groupBy($groupBy)
             ->orderBy($groupBy)
         ;
@@ -39,9 +43,14 @@ class AbandonedCartsDataFetcher extends TimePeriod
             ->from('sylius_order', 'o')
             ->andWhere('o.state = :state')
             ->setParameter('state', OrderInterface::STATE_CART)
+            ->andWhere($queryBuilder->expr()->gte('o.created_at', ':from'))
+            ->andWhere($queryBuilder->expr()->lte('o.created_at', ':to'))
+            ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
+            ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
             ->groupBy($groupBy)
             ->orderBy($groupBy)
         ;
+
         $totalAbandonedCarts = $queryBuilder->execute()->fetchAll();
 
         if (empty($totalAbandonedCarts)) {
@@ -81,8 +90,12 @@ class AbandonedCartsDataFetcher extends TimePeriod
                         break;
                 }
             }
+            // mostrar porcentaje o cantidad
+            if(!$showByQuantity)
+            {
+                $abandonedCart[$labels[1]] = round($abandonedCart[$labels[1]]*100/$total, 2).'%';
+            }
 
-            $abandonedCart[$labels[1]] = round($abandonedCart[$labels[1]]*100/$total, 2).'%';
             $fetched[] = $abandonedCart;
         }
 
