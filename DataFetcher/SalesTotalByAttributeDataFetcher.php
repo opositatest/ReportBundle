@@ -41,6 +41,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->select('DATE(o.completed_at) as date', $secondSelect)
         ;
 
+        $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
         $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributesValue);
 
         if($buyback)
@@ -54,7 +55,6 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             $queryBuilder->andWhere($queryBuilder->expr()->in('o.id', $ordersFetched));
         }
 
-        $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
 
         return $queryBuilder
             ->execute()
@@ -72,10 +72,6 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         //Get the orders to verify wich is a buyback
         $queryBuilder
             ->select('o.id as O_ID', 'c.id as C_ID', 'p.id P_ID')
-            ->andWhere($queryBuilder->expr()->gte('o.completed_at', ':from'))
-            ->andWhere($queryBuilder->expr()->lte('o.completed_at', ':to'))
-            ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
-            ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
         ;
         $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributesValue);
 

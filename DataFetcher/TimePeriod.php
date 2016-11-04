@@ -45,12 +45,12 @@ abstract class TimePeriod extends BaseTimePeriod
         return $groupBy;
     }
 
-    protected function addTimePeriodQueryBuilder(QueryBuilder $queryBuilder, array $configuration = [])
+    protected function addTimePeriodQueryBuilder(QueryBuilder $queryBuilder, array $configuration = [], $dateField = 'o.completed_at')
     {
         $groupBy = $this->getGroupBy($configuration);
         $queryBuilder
-            ->andWhere($queryBuilder->expr()->gte('o.completed_at', ':from'))
-            ->andWhere($queryBuilder->expr()->lte('o.completed_at', ':to'))
+            ->andWhere($queryBuilder->expr()->gte($dateField, ':from'))
+            ->andWhere($queryBuilder->expr()->lte($dateField, ':to'))
             ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
             ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
             ->groupBy($groupBy)

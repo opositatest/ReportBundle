@@ -35,9 +35,11 @@ class AverageValueByProductPurchasesDataFetcher extends TimePeriod
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
+        $taxons = $configuration['taxons'];
+        $attributes = $configuration['attributes'];
 
         $queryBuilder
-            ->select('DATE(o.completed_at) as date', 'av.integer_value as "Average Value"')
+            ->select('DATE(o.completed_at) as date', 'av.integer_value as "Value"')
             ->from('sylius_order', 'o')
             ->leftJoin('o','sylius_order_item', 'oi', 'o.id = oi.order_id')
             ->leftJoin( 'oi','sylius_product_variant', 'v', 'oi.variant_id = v.id')
@@ -47,16 +49,15 @@ class AverageValueByProductPurchasesDataFetcher extends TimePeriod
             ->where('o.completed_at IS NOT null')
             ->andWhere('av.integer_value IS NOT null')
         ;
-        if(isset($configuration['taxons'])) {
-            foreach ($configuration['taxons'] as $taxon) {
+        if($taxons != null) {
+            foreach ($taxons as $taxon) {
                 $queryBuilder
                     ->andWhere('p.main_taxon_id = :id')
                     ->setParameter('id', $taxon->getId());
             }
         }
-
-        if(isset($configuration['attributes'])) {
-            foreach ($configuration['attribute'] as $attributeId) {
+        if($attributes != null) {
+            foreach ($attributes as $attributeId) {
                 $queryBuilder
                     ->andWhere('a.id = :attributeId')
                     ->setParameter('attributeId', $attributeId);

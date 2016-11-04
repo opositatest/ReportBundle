@@ -29,13 +29,8 @@ class AbandonedCartsDataFetcher extends TimePeriod
         $queryBuilder
             ->select('DATE(o.created_at) as date', 'COUNT(o.id) as "Abandoned carts"')
             ->from('sylius_order', 'o')
-            ->andWhere($queryBuilder->expr()->gte('o.created_at', ':from'))
-            ->andWhere($queryBuilder->expr()->lte('o.created_at', ':to'))
-            ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
-            ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
-            ->groupBy($groupBy)
-            ->orderBy($groupBy)
         ;
+        $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration,'o.created_at');
         $totalCarts = $queryBuilder->execute()->fetchAll();
 
         $queryBuilder
@@ -43,13 +38,8 @@ class AbandonedCartsDataFetcher extends TimePeriod
             ->from('sylius_order', 'o')
             ->andWhere('o.state = :state')
             ->setParameter('state', OrderInterface::STATE_CART)
-            ->andWhere($queryBuilder->expr()->gte('o.created_at', ':from'))
-            ->andWhere($queryBuilder->expr()->lte('o.created_at', ':to'))
-            ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
-            ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
-            ->groupBy($groupBy)
-            ->orderBy($groupBy)
         ;
+        $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration,'o.created_at');
 
         $totalAbandonedCarts = $queryBuilder->execute()->fetchAll();
 

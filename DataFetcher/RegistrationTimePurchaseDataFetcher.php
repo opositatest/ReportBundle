@@ -27,10 +27,11 @@ class RegistrationTimePurchaseDataFetcher extends TimePeriod
             ->from('sylius_customer', 'c')
             ->innerJoin('c', 'sylius_order', 'o', 'o.customer_id = c.id')
             ->where('o.completed_at IS NOT null')
-            ->andWhere($queryBuilder->expr()->gte('o.completed_at', ':from'))
-            ->andWhere($queryBuilder->expr()->lte('o.completed_at', ':to'))
-            ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
-            ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
+        ;
+
+        $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
+
+        $queryBuilder
             ->orderBy('o.completed_at','ASC')
             ->groupBy('c.id')
         ;
