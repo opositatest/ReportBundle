@@ -4,6 +4,7 @@ namespace Opos\Bundle\ReportBundle\DataFetcher;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Opos\Bundle\ReportBundle\DataFetchers;
+use Sylius\Component\Core\OrderCheckoutStates;
 use Sylius\Component\Order\Model\OrderInterface;
 
 /**
@@ -37,7 +38,9 @@ class AbandonedCartsDataFetcher extends TimePeriod
             ->select('DATE(o.created_at) as date', 'COUNT(o.id) as "Abandoned carts"')
             ->from('sylius_order', 'o')
             ->andWhere('o.state = :state')
+            ->andWhere('o.checkout_state = :checkout_state')
             ->setParameter('state', OrderInterface::STATE_CART)
+            ->setParameter('checkout_state', OrderCheckoutStates::STATE_CART)
         ;
         $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration,'o.created_at');
 

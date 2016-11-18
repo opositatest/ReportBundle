@@ -29,7 +29,7 @@ class RegistrationTimePurchaseDataFetcher extends TimePeriod
             ->where('o.completed_at IS NOT null')
         ;
 
-        $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
+        $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration,$dateField = 'c.created_at');
 
         $queryBuilder
             ->orderBy('o.completed_at','ASC')
@@ -37,7 +37,6 @@ class RegistrationTimePurchaseDataFetcher extends TimePeriod
         ;
 
         $ordersCompleted = $queryBuilder->execute()->fetchAll();
-
         return $this->getMediaResults($ordersCompleted, $configuration);
     }
 

@@ -24,7 +24,8 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
      */
     protected function getData(array $configuration = [])
     {
-        $attributesValue = $configuration['attributes'];
+        $attribute = $configuration['attributes'];
+        $attributeValue = $configuration['attributeValue'];
         $buyback = $configuration['buyback'];
 
         /** @var QueryBuilder $queryBuilder */
@@ -42,7 +43,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         ;
 
         $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
-        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributesValue);
+        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attribute,$attributeValue);
 
         if($buyback)
         {
@@ -59,7 +60,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         return $queryBuilder
             ->execute()
             ->fetchAll()
-        ;
+            ;
     }
 
     protected function getBuybackOrdersWithAttribute(array $configuration = [])
@@ -92,7 +93,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         return $ordersFetched;
     }
 
-    protected function addQueriesByAttributeId(QueryBuilder $queryBuilder, $attributesValue)
+    protected function addQueriesByAttributeId(QueryBuilder $queryBuilder, $attribute, $attributeValue)
     {
         $queryBuilder
             ->from('sylius_order', 'o')
@@ -102,16 +103,15 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->leftJoin( 'v','sylius_product', 'p',  'v.product_id = p.id')
             ->leftJoin( 'p','sylius_product_attribute_value', 'av',  'p.id = av.product_id')
             ->leftJoin( 'av','sylius_product_attribute', 'a',  'a.id = av.attribute_id')
-            ->andWhere('o.completed_at IS NOT null');
-
-        if(isset($attributesValue)){
-            foreach($attributesValue as $attributeId)
-            {
-                $queryBuilder
-                    ->andWhere('a.id = :attributeId')
-                    ->setParameter('attributeId', $attributeId)
-                ;
-            }
+            ->andWhere('o.completed_at IS NOT null')
+        ;
+        if(isset($attribute) && isset($attributeValue)){
+            $queryBuilder
+                ->andWhere('a.code = :attribute')
+                ->setParameter('attribute', $attribute)
+                ->andWhere('av.text_value = :attributeValue')
+                ->setParameter('attributeValue', $attributeValue)
+            ;
         }
         return $queryBuilder;
     }

@@ -19,9 +19,10 @@ class SalesTotalDataFetcher extends TimePeriod
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
+        $baseCurrencyCode = $configuration['baseCurrency'] ? 'in '.$configuration['baseCurrency']->getCode() : '';
 
         $queryBuilder
-            ->select('DATE(o.completed_at) as date', 'p.created_at as "Product Price"')
+            ->select('DATE(o.completed_at) as date', 'TRUNCATE((o.total * o.exchange_rate)/100,3) as "Total '.$baseCurrencyCode.'"')
             ->from('sylius_order', 'o')
             ->leftJoin('o','sylius_order_item', 'oi', 'o.id = oi.order_id')
             ->leftJoin( 'oi','sylius_product_variant', 'v', 'oi.variant_id = v.id')
@@ -63,7 +64,7 @@ class SalesTotalDataFetcher extends TimePeriod
         {
             $fetched[] = [
                 $labels[0] => $date,
-                $labels[1] => $productPrice['price']+(($productPrice['price']*$ivaTax)/100)
+                $labels[1] => round($productPrice['price']+(($productPrice['price']*$ivaTax)/100),2,PHP_ROUND_HALF_UP)
             ];
         }
 
