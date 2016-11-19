@@ -24,8 +24,15 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
      */
     protected function getData(array $configuration = [])
     {
-        $attribute = $configuration['attributes'];
-        $attributeValue = $configuration['attributeValue'];
+        $i = 0;
+        while ($configuration['attribute'.$i] != '')
+        {
+            $attributes[] = $configuration['attribute'.$i];
+            $attributesValue[] = $configuration['attributeValue'.$i];
+            $operators[] = $configuration['operator'.$i];
+            $i++;
+        }
+
         $buyback = $configuration['buyback'];
 
         /** @var QueryBuilder $queryBuilder */
@@ -42,13 +49,13 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->select('DATE(o.completed_at) as date', $secondSelect)
         ;
 
+        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributes, $attributesValue, $operators);
         $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
-        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attribute,$attributeValue);
 
         if($buyback)
         {
             // Fetch the orders by attribute
-            $ordersFetched = $this->getBuybackOrdersWithAttribute($configuration);
+            $ordersFetched = $this->getBuybackOrdersWithAttribute($configuration, $attributes, $attributesValue,$operators);
 
             // validacion - forzar a que no traiga ningun valor si no tuvo recompras
             if(count($ordersFetched)<=0)$ordersFetched = array(1=>0);
@@ -63,7 +70,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ;
     }
 
-    protected function getBuybackOrdersWithAttribute(array $configuration = [])
+    protected function getBuybackOrdersWithAttribute(array $configuration = [], $attributes, $attributesValue,$operators)
     {
         $attributesValue = $configuration['attributes'];
 
@@ -74,7 +81,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         $queryBuilder
             ->select('o.id as O_ID', 'c.id as C_ID', 'p.id P_ID')
         ;
-        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributesValue);
+        $queryBuilder = $this->addQueriesByAttributeId($queryBuilder, $attributes, $attributesValue,$operators);
 
         $orders = $queryBuilder->execute()->fetchAll();
 
@@ -93,7 +100,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         return $ordersFetched;
     }
 
-    protected function addQueriesByAttributeId(QueryBuilder $queryBuilder, $attribute, $attributeValue)
+    protected function addQueriesByAttributeId(QueryBuilder $queryBuilder, $attributes, $attributesValue,$operators)
     {
         $queryBuilder
             ->from('sylius_order', 'o')
@@ -105,13 +112,34 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->leftJoin( 'av','sylius_product_attribute', 'a',  'a.id = av.attribute_id')
             ->andWhere('o.completed_at IS NOT null')
         ;
-        if(isset($attribute) && isset($attributeValue)){
-            $queryBuilder
-                ->andWhere('a.code = :attribute')
-                ->setParameter('attribute', $attribute)
-                ->andWhere('av.text_value = :attributeValue')
-                ->setParameter('attributeValue', $attributeValue)
-            ;
+
+        $andWhereAttrValue = 'av.text_value LIKE :attributeValue
+                                OR av.boolean_value LIKE :attributeValue
+                                OR av.text_value LIKE :attributeValue
+                                OR av.integer_value LIKE :attributeValue
+                                OR av.datetime_value LIKE :attributeValue
+                                OR av.date_value LIKE :attributeValue'
+        ;
+        if(count($attributes > 0) && count($attributesValue) > 0){
+            foreach($attributes as $key=>$attribute)
+            {
+                if($operators['key'] == 'AND'){
+                    $queryBuilder
+                        ->andWhere('a.code = :attribute')
+                        ->setParameter('attribute', ($attributes[$key]))
+                        ->andWhere($andWhereAttrValue)
+                        ->setParameter('attributeValue', $attributesValue[$key])
+                    ;
+                }else{
+                    $queryBuilder
+                        ->orWhere('a.code = :attribute')
+                        ->setParameter('attribute', ($attributes[$key]))
+                        ->andWhere($andWhereAttrValue)
+                        ->setParameter('attributeValue', $attributesValue[$key])
+                    ;
+                }
+
+            }
         }
         return $queryBuilder;
     }
