@@ -30,7 +30,12 @@ class SalesTotalDataFetcher extends TimePeriod
             ->where('o.completed_at IS NOT null')
         ;
 
-        $queryBuilder = $this->addTimePeriodQueryBuilder($queryBuilder, $configuration);
+        $queryBuilder
+            ->andWhere($queryBuilder->expr()->gte('o.completed_at', ':from'))
+            ->andWhere($queryBuilder->expr()->lte('o.completed_at', ':to'))
+            ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
+            ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
+        ;
 
         $ordersCompleted = $queryBuilder->execute()->fetchAll();
 

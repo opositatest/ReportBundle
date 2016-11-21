@@ -19,12 +19,22 @@ use Opos\Bundle\ReportBundle\DataFetchers;
  */
 class SalesTotalByAttributeDataFetcher extends TimePeriod
 {
+    protected function getAttrValueClause($attrValue)
+    {
+        return $whereAttrValue = 'av.text_value LIKE "'.$attrValue.'" OR av.integer_value LIKE "'.$attrValue.'" OR av.datetime_value LIKE "'.$attrValue.'" OR av.date_value LIKE "'.$attrValue.'"))'
+        ;
+    }
+
+
     /**
      * {@inheritdoc}
      */
     protected function getData(array $configuration = [])
     {
         $i = 0;
+        $attributes = [];
+        $attributesValue = [];
+        $operators = [];
         while ($configuration['attribute'.$i] != '')
         {
             $attributes[] = $configuration['attribute'.$i];
@@ -32,14 +42,13 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             $operators[] = $configuration['operator'.$i];
             $i++;
         }
-
         $buyback = $configuration['buyback'];
 
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
 
         $baseCurrencyCode = $configuration['baseCurrency'] ? 'in '.$configuration['baseCurrency']->getCode() : '';
-        $secondSelect = 'COUNT(o.id) as "Cantidad"';
+        $secondSelect = 'COUNT(DISTINCT(o.id)) as "Cantidad"';
         if($configuration['viewMode'] == 'total')
         {
             $secondSelect = 'TRUNCATE((o.total * o.exchange_rate)/100,2) as "total sum '.$baseCurrencyCode.'"';
@@ -62,7 +71,6 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
 
             $queryBuilder->andWhere($queryBuilder->expr()->in('o.id', $ordersFetched));
         }
-
 
         return $queryBuilder
             ->execute()
@@ -113,34 +121,28 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->andWhere('o.completed_at IS NOT null')
         ;
 
-        $andWhereAttrValue = 'av.text_value LIKE :attributeValue
-                                OR av.boolean_value LIKE :attributeValue
-                                OR av.text_value LIKE :attributeValue
-                                OR av.integer_value LIKE :attributeValue
-                                OR av.datetime_value LIKE :attributeValue
-                                OR av.date_value LIKE :attributeValue'
-        ;
-        if(count($attributes > 0) && count($attributesValue) > 0){
+        $andWhereAttrValue = 'av.integer_value LIKE :attributeValue';
+        $andWhere = '';
+
+        if(count($attributes) > 0 && count($attributesValue) > 0){
             foreach($attributes as $key=>$attribute)
             {
-                if($operators['key'] == 'AND'){
-                    $queryBuilder
-                        ->andWhere('a.code = :attribute')
-                        ->setParameter('attribute', ($attributes[$key]))
-                        ->andWhere($andWhereAttrValue)
-                        ->setParameter('attributeValue', $attributesValue[$key])
-                    ;
+                if($key == 0){
+                    $andWhere .= '(a.code = "'.$attribute.'"';
+                   /* $queryBuilder
+                        ->andWhere('a.code = :attribute'.$key)
+                    ;*/
+                }else if($operators[$key-1] == 'and'){
+                    $andWhere .= ' AND (a.code = "'.$attribute.'"';
                 }else{
-                    $queryBuilder
-                        ->orWhere('a.code = :attribute')
-                        ->setParameter('attribute', ($attributes[$key]))
-                        ->andWhere($andWhereAttrValue)
-                        ->setParameter('attributeValue', $attributesValue[$key])
-                    ;
+                    $andWhere .= ' OR (a.code = "'.$attribute.'"';
                 }
+
+                $andWhere .= ' AND ('.$this->getAttrValueClause($attributesValue[$key]);
 
             }
         }
+        $queryBuilder->andWhere($andWhere);
         return $queryBuilder;
     }
 

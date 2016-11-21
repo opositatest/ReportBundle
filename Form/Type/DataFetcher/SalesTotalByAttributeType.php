@@ -41,30 +41,34 @@ class SalesTotalByAttributeType extends TimePeriodType
             $attributeChoices[$attribute->getCode()] = $attribute->getName();
         }
 
-        $len = count($attributes);
-        foreach($attributes as $key=>$attribute)
+        for($i=0; $i<2 ;$i++)
         {
             $builder
-                ->add('attribute'.$key, ChoiceType::class, [
+                ->add('attribute'.$i, ChoiceType::class, [
                     'choices' => $attributeChoices,
                     'empty_value' => '',
                     'multiple' => false,
                     'required' => false,
                     'label' => 'Attribute',
                 ])
-                ->add('attributeValue'.$key, 'text', [
+                ->add('attributeValue'.$i, 'text', [
                     'label' => 'Attribute Value',
                     'required' => false,
                     'attr' => [
                         'class' => ''
                     ]
                 ])
-                ->add('operator'.$key, ChoiceType::class, [
+            ;
+            if($i < 1)
+            {
+                $builder
+                    ->add('operator'.$i, ChoiceType::class, [
                     'choices' => $andOrChoices,
                     'label' => 'Operator',
                     'required' => false,
                 ])
-            ;
+                ;
+            }
         }
 
         $builder
