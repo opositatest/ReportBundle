@@ -39,7 +39,12 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         {
             $attributes[] = $configuration['attribute'.$i];
             $attributesValue[] = $configuration['attributeValue'.$i];
-            $operators[] = $configuration['operator'.$i];
+            if(isset($configuration['operator'.$i]))
+            {
+                $operators[] = $configuration['operator'.$i];
+            }else{
+                $operators[] = null;
+            }
             $i++;
         }
         $buyback = $configuration['buyback'];
