@@ -19,12 +19,22 @@ use Opos\Bundle\ReportBundle\DataFetchers;
  */
 class SalesTotalByAttributeDataFetcher extends TimePeriod
 {
-    protected function getAttrValueClause($attrValue)
+    protected function getAttrValueClause($attrValue, $key)
     {
-        return $whereAttrValue = 'av.text_value LIKE "'.$attrValue.'" OR av.integer_value LIKE "'.$attrValue.'" OR av.datetime_value LIKE "'.$attrValue.'" OR av.date_value LIKE "'.$attrValue.'"))'
+        return $whereAttrValue = 'av'.$key.'.text_value LIKE "'.$attrValue.'" OR av'.$key.'.integer_value LIKE "'.$attrValue.'" OR av'.$key.'.datetime_value LIKE "'.$attrValue.'" OR av'.$key.'.date_value LIKE "'.$attrValue.'" OR av'.$key.'.boolean_value LIKE "'.$attrValue.'" OR av'.$key.'.float_value LIKE "'.$attrValue.'"))'
         ;
     }
 
+    protected function getValueOrNull($value)
+    {
+        if(isset($value))
+        {
+            return $value;
+        }else{
+            return null;
+        }
+
+    }
 
     /**
      * {@inheritdoc}
@@ -37,16 +47,15 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         $operators = [];
         while ($configuration['attribute'.$i] != '')
         {
-            $attributes[] = $configuration['attribute'.$i];
-            $attributesValue[] = $configuration['attributeValue'.$i];
-            if(isset($configuration['operator'.$i]))
-            {
-                $operators[] = $configuration['operator'.$i];
-            }else{
-                $operators[] = null;
-            }
+            $attributes[] = $this->getValueOrNull($configuration['attribute'.$i]);
+
+            $attributesValue[] =  $this->getValueOrNull($configuration['attributeValue'.$i]);
+
+            $operators[] = $this->getValueOrNull($configuration['operator'.$i]);
+
             $i++;
         }
+
         $buyback = $configuration['buyback'];
 
         /** @var QueryBuilder $queryBuilder */
@@ -121,8 +130,6 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->leftJoin('o','sylius_order_item', 'oi', 'o.id = oi.order_id')
             ->leftJoin( 'oi','sylius_product_variant', 'v', 'oi.variant_id = v.id')
             ->leftJoin( 'v','sylius_product', 'p',  'v.product_id = p.id')
-            ->leftJoin( 'p','sylius_product_attribute_value', 'av',  'p.id = av.product_id')
-            ->leftJoin( 'av','sylius_product_attribute', 'a',  'a.id = av.attribute_id')
             ->andWhere('o.completed_at IS NOT null')
         ;
 
@@ -132,18 +139,22 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         if(count($attributes) > 0 && count($attributesValue) > 0){
             foreach($attributes as $key=>$attribute)
             {
+                $queryBuilder
+                    ->leftJoin( 'p','sylius_product_attribute_value', 'av'.$key,  'p.id = av'.$key.'.product_id')
+                    ->leftJoin( 'av'.$key,'sylius_product_attribute', 'a'.$key,  'a'.$key.'.id = av'.$key.'.attribute_id')
+                ;
                 if($key == 0){
-                    $andWhere .= '(a.code = "'.$attribute.'"';
+                    $andWhere .= '(a'.$key.'.code = "'.$attribute.'"';
                    /* $queryBuilder
                         ->andWhere('a.code = :attribute'.$key)
                     ;*/
                 }else if($operators[$key-1] == 'and'){
-                    $andWhere .= ' AND (a.code = "'.$attribute.'"';
+                    $andWhere .= ' AND (a'.$key.'.code = "'.$attribute.'"';
                 }else{
-                    $andWhere .= ' OR (a.code = "'.$attribute.'"';
+                    $andWhere .= ' OR (a'.$key.'.code = "'.$attribute.'"';
                 }
 
-                $andWhere .= ' AND ('.$this->getAttrValueClause($attributesValue[$key]);
+                $andWhere .= ' AND ('.$this->getAttrValueClause($attributesValue[$key], $key);
 
             }
         }

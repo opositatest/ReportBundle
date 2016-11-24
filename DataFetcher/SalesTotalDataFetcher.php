@@ -22,7 +22,7 @@ class SalesTotalDataFetcher extends TimePeriod
         $baseCurrencyCode = $configuration['baseCurrency'] ? 'in '.$configuration['baseCurrency']->getCode() : '';
 
         $queryBuilder
-            ->select('DATE(o.completed_at) as date', 'TRUNCATE((o.total * o.exchange_rate)/100,3) as "Total '.$baseCurrencyCode.'"')
+            ->select('DATE(o.completed_at) as date','TRUNCATE(SUM(oi.total * o.exchange_rate)/100,3) as "Total '.$baseCurrencyCode.'"', 'TRUNCATE((o.total * o.exchange_rate)/100,3) as "Total Order '.$baseCurrencyCode.'"')
             ->from('sylius_order', 'o')
             ->leftJoin('o','sylius_order_item', 'oi', 'o.id = oi.order_id')
             ->leftJoin( 'oi','sylius_product_variant', 'v', 'oi.variant_id = v.id')
@@ -35,20 +35,20 @@ class SalesTotalDataFetcher extends TimePeriod
             ->andWhere($queryBuilder->expr()->lte('o.completed_at', ':to'))
             ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
             ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
+            ->groupBy('o.id')
         ;
 
         $ordersCompleted = $queryBuilder->execute()->fetchAll();
-
         if (empty($ordersCompleted)) {
             return [];
         }
 
         $labels = array_keys($ordersCompleted[0]);
 
-        $ivaTax = 0;
-        if(($configuration['iva']))
+        $ivaTax = 1;
+        if(!($configuration['iva']))
         {
-            $ivaTax = 21;
+            $ivaTax = 1.21;
         }
 
         $productPriceTotal = array();
@@ -59,7 +59,10 @@ class SalesTotalDataFetcher extends TimePeriod
 
             $currentProductPrice = isset($productPriceTotal[$dateFormated])?$productPriceTotal[$dateFormated]:array('price' => 0);
 
-            $currentProductPrice['price'] = $currentProductPrice['price']+$orderCompleted[$labels[1]];
+            $ivaPrice = $orderCompleted[$labels[1]] - ($orderCompleted[$labels[1]]/$ivaTax);
+            //$priceWithOutIva = $currentProductPrice['price'] - $ivaPrice;
+
+            $currentProductPrice['price'] = $currentProductPrice['price']+($orderCompleted[$labels[2]] - $ivaPrice);
 
             $productPriceTotal[$dateFormated] = $currentProductPrice;
         }
@@ -69,7 +72,7 @@ class SalesTotalDataFetcher extends TimePeriod
         {
             $fetched[] = [
                 $labels[0] => $date,
-                $labels[1] => round($productPrice['price']+(($productPrice['price']*$ivaTax)/100),2,PHP_ROUND_HALF_UP)
+                $labels[1] => round($productPrice['price'],2,PHP_ROUND_HALF_UP)
             ];
         }
 
