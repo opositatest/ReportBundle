@@ -62,7 +62,7 @@ class SalesTotalDataFetcher extends TimePeriod
             $ivaPrice = $orderCompleted[$labels[1]] - ($orderCompleted[$labels[1]]/$ivaTax);
             //$priceWithOutIva = $currentProductPrice['price'] - $ivaPrice;
 
-            $currentProductPrice['price'] = $currentProductPrice['price']+($orderCompleted[$labels[2]] - $ivaPrice);
+            $currentProductPrice['price'] = $currentProductPrice['price']+($orderCompleted[$labels[1]] - $ivaPrice);
 
             $productPriceTotal[$dateFormated] = $currentProductPrice;
         }
