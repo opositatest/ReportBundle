@@ -25,11 +25,11 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         ;
     }
 
-    protected function getValueOrNull($value)
+    protected function getValueOrNull($valueCollection, $valueIndex)
     {
-        if(isset($value))
+        if(isset($valueCollection[$valueIndex]))
         {
-            return $value;
+            return $valueCollection[$valueIndex];
         }else{
             return null;
         }
@@ -45,13 +45,13 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         $attributes = [];
         $attributesValue = [];
         $operators = [];
-        while ($configuration['attribute'.$i] != '')
+        while (isset($configuration['attribute'.$i]) && $configuration['attribute'.$i] != '')
         {
-            $attributes[] = $this->getValueOrNull($configuration['attribute'.$i]);
+            $attributes[] = $this->getValueOrNull($configuration, 'attribute'.$i);
 
-            $attributesValue[] =  $this->getValueOrNull($configuration['attributeValue'.$i]);
+            $attributesValue[] =  $this->getValueOrNull($configuration, 'attributeValue'.$i);
 
-            $operators[] = $this->getValueOrNull($configuration['operator'.$i]);
+            $operators[] = $this->getValueOrNull($configuration, 'operator'.$i);
 
             $i++;
         }
