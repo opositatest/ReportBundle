@@ -94,8 +94,6 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
 
     protected function getBuybackOrdersWithAttribute(array $configuration = [], $attributes, $attributesValue,$operators)
     {
-        $attributesValue = $configuration['attributes'];
-
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $this->entityManager->getConnection()->createQueryBuilder();
 
@@ -133,7 +131,6 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->andWhere('o.completed_at IS NOT null')
         ;
 
-        $andWhereAttrValue = 'av.integer_value LIKE :attributeValue';
         $andWhere = '';
 
         if(count($attributes) > 0 && count($attributesValue) > 0){
