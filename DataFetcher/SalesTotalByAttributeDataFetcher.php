@@ -19,6 +19,7 @@ use Opos\Bundle\ReportBundle\DataFetchers;
  */
 class SalesTotalByAttributeDataFetcher extends TimePeriod
 {
+
     protected function getAttrValueClause($attrValue, $key)
     {
         return $whereAttrValue = 'av'.$key.'.text_value LIKE "'.$attrValue.'" OR av'.$key.'.integer_value LIKE "'.$attrValue.'" OR av'.$key.'.datetime_value LIKE "'.$attrValue.'" OR av'.$key.'.date_value LIKE "'.$attrValue.'" OR av'.$key.'.boolean_value LIKE "'.$attrValue.'" OR av'.$key.'.float_value LIKE "'.$attrValue.'"))'
@@ -109,7 +110,7 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
         $productBuybacks = [];
         foreach($orders as $order)
         {
-            $value = $order['C_ID'].'_'.$order['P_ID'];
+            $value = $order['C_ID'];
             if(in_array($value, $productBuybacks))
             {
                 $ordersFetched[] = $order['O_ID'];

@@ -4,6 +4,8 @@ namespace Opos\Bundle\ReportBundle\DataFetcher;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Opos\Bundle\ReportBundle\DataFetchers;
+use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
+use Doctrine\ORM\EntityManager;
 
 /**
  * Total de compras. Con y sin IVA
@@ -13,8 +15,23 @@ use Opos\Bundle\ReportBundle\DataFetchers;
 class SalesTotalDataFetcher extends TimePeriod
 {
     /**
-     * {@inheritdoc}
+     * @var EntityManager
      */
+    protected $entityManager;
+    /**
+     * @var TaxCategoryRepositoryInterface
+     */
+    private $taxCategoryRepository;
+
+    /**
+     * @param TaxCategoryRepositoryInterface $taxCategoryRepository
+     */
+    public function __construct(EntityManager $entityManager,TaxCategoryRepositoryInterface $taxCategoryRepository)
+    {
+        $this->entityManager = $entityManager;
+        $this->taxCategoryRepository = $taxCategoryRepository;
+    }
+
     protected function getData(array $configuration = [])
     {
         /** @var QueryBuilder $queryBuilder */

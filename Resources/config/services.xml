@@ -32,6 +32,7 @@
         <!-- 6. Sales total -->
         <service id="opos.report.data_fetcher.sales_total" class="%opos.report.data_fetcher.sales_total.class%">
             <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="sylius.repository.tax_category" />
             <tag name="sylius.report.data_fetcher" fetcher="opos_data_fetcher_sales_total" label="Sales Total With Iva" />
         </service>
         <!-- 7. Tiempo medio por producto de todas las compras -->
