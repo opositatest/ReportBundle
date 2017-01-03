@@ -4,6 +4,8 @@ namespace Opos\Bundle\ReportBundle\DataFetcher;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Opos\Bundle\ReportBundle\DataFetchers;
+use Sylius\Component\Core\OrderCheckoutStates;
+use Sylius\Component\Order\Model\OrderInterface;
 
 /**
  * Número de compras de un tipo de producto (un producto puede tener un atributo
@@ -130,6 +132,10 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->leftJoin( 'oi','sylius_product_variant', 'v', 'oi.variant_id = v.id')
             ->leftJoin( 'v','sylius_product', 'p',  'v.product_id = p.id')
             ->andWhere('o.completed_at IS NOT null')
+            ->andWhere('o.state = :state')
+            ->andWhere('o.checkout_state = :checkout_state')
+            ->setParameter('state', OrderInterface::STATE_CONFIRMED)
+            ->setParameter('checkout_state', OrderCheckoutStates::STATE_COMPLETED)
         ;
 
         $andWhere = '';
