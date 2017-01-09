@@ -133,9 +133,10 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
             ->leftJoin( 'v','sylius_product', 'p',  'v.product_id = p.id')
             ->andWhere('o.completed_at IS NOT null')
             ->andWhere('o.state = :state')
-            ->andWhere('o.checkout_state = :checkout_state')
+            ->andWhere('o.checkout_state = :checkout_state OR o.payment_state = :payment_state')
             ->setParameter('state', OrderInterface::STATE_CONFIRMED)
             ->setParameter('checkout_state', OrderCheckoutStates::STATE_COMPLETED)
+            ->setParameter('payment_state', PaymentInterface::STATE_COMPLETED)
         ;
 
         $andWhere = '';
