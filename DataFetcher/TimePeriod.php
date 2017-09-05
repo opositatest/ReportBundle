@@ -2,8 +2,6 @@
 
 namespace Opos\Bundle\ReportBundle\DataFetcher;
 
-use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\ORM\EntityManager;
 use Sylius\Bundle\ReportBundle\DataFetcher\TimePeriod as BaseTimePeriod;
 
 /**
@@ -11,54 +9,6 @@ use Sylius\Bundle\ReportBundle\DataFetcher\TimePeriod as BaseTimePeriod;
  */
 abstract class TimePeriod extends BaseTimePeriod
 {
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @param EntityManager $entityManager
-     */
-    public function __construct(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
-    /**
-     * Devuelve una cadena concatenada de todos los tipos de agrupación pasados
-     * por la configuración.
-     *
-     * @param array $configuration
-     * @return string
-     */
-    protected function getGroupBy(array $configuration = [])
-    {
-        $groupBy = '';
-
-        foreach ($configuration['groupBy'] as $groupByElement) {
-            $groupBy = $groupByElement.'(date)'.' '.$groupBy;
-        }
-
-        $groupBy = substr($groupBy, 0, -1);
-        $groupBy = str_replace(' ', ', ', $groupBy);
-
-        return $groupBy;
-    }
-
-    protected function addTimePeriodQueryBuilder(QueryBuilder $queryBuilder, array $configuration = [], $dateField = 'o.completed_at')
-    {
-        $groupBy = $this->getGroupBy($configuration);
-        $queryBuilder
-            ->andWhere($queryBuilder->expr()->gte($dateField, ':from'))
-            ->andWhere($queryBuilder->expr()->lte($dateField, ':to'))
-            ->setParameter('from', $configuration['start']->format('Y-m-d H:i:s'))
-            ->setParameter('to', $configuration['end']->format('Y-m-d H:i:s'))
-            ->groupBy($groupBy)
-            ->orderBy($groupBy)
-        ;
-
-        return $queryBuilder;
-    }
 
     /**
      * Obtiene los resultados pasados en $datas y los devuelve en forma de promedio

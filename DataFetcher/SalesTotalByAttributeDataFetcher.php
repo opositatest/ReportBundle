@@ -4,6 +4,7 @@ namespace Opos\Bundle\ReportBundle\DataFetcher;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Opos\Bundle\ReportBundle\DataFetchers;
+use Opos\Bundle\ReportBundle\Form\Type\DataFetcher\SalesTotalByAttributeType;
 use Sylius\Component\Core\OrderCheckoutStates;
 use Sylius\Component\Order\Model\OrderInterface;
 
@@ -172,6 +173,6 @@ class SalesTotalByAttributeDataFetcher extends TimePeriod
      */
     public function getType()
     {
-        return DataFetchers::SALES_TOTAL_BY_ATTRIBUTE;
+        return SalesTotalByAttributeType::class;
     }
 }

@@ -2,9 +2,7 @@
 
 namespace Opos\Bundle\ReportBundle\Form\Type\DataFetcher;
 
-use Sylius\Bundle\CoreBundle\DataFetcher\NumberOfOrdersDataFetcher;
-use Sylius\Component\Core\Model\Product;
-use Symfony\Component\Form\AbstractType;
+use Sylius\Bundle\ReportBundle\Form\Type\DataFetcher\TimePeriodType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -17,14 +15,14 @@ class SalesTotalType extends TimePeriodType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder
             ->add('iva', 'checkbox', [
                 'label' => 'Con Iva?',
                 'required' => false,
             ])
         ;
-
-        parent::buildForm($builder, $options);
     }
 
     /**

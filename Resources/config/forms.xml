@@ -34,6 +34,7 @@
         <!-- 7. Tiempo medio de suscripcion de todas las compras -->
         <service id="opos.form.type.data_fetcher.average_value_by_product_purchases" class="%opos.form.type.data_fetcher.average_value_by_product_purchases.class%">
             <argument type="service" id="sylius.repository.product_attribute" />
+            <argument type="service" id="sylius.repository.taxon" />
             <tag name="form.type" alias="opos_data_fetcher_average_value_by_product_purchases" />
         </service>
     </services>

@@ -2,7 +2,7 @@
 
 namespace Opos\Bundle\ReportBundle\Form\Type\DataFetcher;
 
-use Symfony\Component\Form\AbstractType;
+use Sylius\Bundle\ReportBundle\Form\Type\DataFetcher\TimePeriodType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -17,6 +17,7 @@ class AbandonedCartsType extends TimePeriodType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
+
         $builder
             ->add('showByQuantity', CheckboxType::class, [
                 'label' => 'Mostrar por cantidad?',

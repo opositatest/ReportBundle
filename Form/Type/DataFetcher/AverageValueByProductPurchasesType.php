@@ -3,9 +3,11 @@
 namespace Opos\Bundle\ReportBundle\Form\Type\DataFetcher;
 
 use Doctrine\ORM\EntityRepository;
-use Sylius\Component\Product\Model\Attribute;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Sylius\Bundle\ReportBundle\Form\Type\DataFetcher\TimePeriodType;
+use Sylius\Bundle\TaxonomyBundle\Form\Type\TaxonAutocompleteChoiceType;
+use Sylius\Component\Attribute\Model\AttributeInterface;
+use Sylius\Component\Core\Model\TaxonInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -19,9 +21,15 @@ class AverageValueByProductPurchasesType extends TimePeriodType
      */
     protected $attributeRepository;
 
-    public function __construct(EntityRepository $attributeRepository)
+    /**
+     * @var EntityRepository
+     */
+    protected $taxonRepository;
+
+    public function __construct(EntityRepository $attributeRepository, EntityRepository $taxonRepository)
     {
         $this->attributeRepository = $attributeRepository;
+        $this->taxonRepository = $taxonRepository;
     }
 
     /**
@@ -29,18 +37,26 @@ class AverageValueByProductPurchasesType extends TimePeriodType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $attributes = $this->attributeRepository->findAll();
+        parent::buildForm($builder, $options);
 
         $attributeChoices = [];
-        /** @var Attribute $attribute */
-        foreach($attributes as $attribute)
+        /** @var AttributeInterface $attribute */
+        foreach($this->attributeRepository->findAll() as $attribute)
         {
             if($attribute->getType() == 'integer')
-            $attributeChoices[$attribute->getId()] = $attribute->getCode();
+            $attributeChoices[$attribute->getName()] = $attribute->getId();
         }
-        parent::buildForm($builder, $options);
+
+        $taxonChoices = [];
+        /** @var TaxonInterface $taxon */
+        foreach($this->taxonRepository->findAll() as $taxon)
+        {
+            $taxonChoices[$taxon->getName()] = $taxon->getId();
+        }
+
         $builder
-            ->add('taxons', 'sylius_taxon_choice', [
+            ->add('taxons', ChoiceType::class, [
+                'choices' => $taxonChoices,
                 'required' => false,
                 'multiple' => true,
                 'label' => 'sylius.form.product.taxons',

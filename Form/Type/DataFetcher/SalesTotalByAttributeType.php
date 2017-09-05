@@ -3,9 +3,8 @@
 namespace Opos\Bundle\ReportBundle\Form\Type\DataFetcher;
 
 use Doctrine\ORM\EntityRepository;
-use Sylius\Component\Attribute\Model\AttributeValue;
-use Sylius\Component\Product\Model\Attribute;
-use Symfony\Component\Form\AbstractType;
+use Sylius\Bundle\ReportBundle\Form\Type\DataFetcher\TimePeriodType;
+use Sylius\Component\Attribute\Model\AttributeInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,12 +29,14 @@ class SalesTotalByAttributeType extends TimePeriodType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $attributes = $this->attributeRepository->findAll();
 
         $attributeChoices = [];
         $andOrChoices = array('and' => 'AND', 'or' => 'OR');
 
-        /** @var Attribute $attribute */
+        /** @var AttributeInterface $attribute */
         foreach($attributes as $attribute)
         {
             $attributeChoices[$attribute->getCode()] = $attribute->getName();
@@ -46,7 +47,6 @@ class SalesTotalByAttributeType extends TimePeriodType
             $builder
                 ->add('attribute'.$i, ChoiceType::class, [
                     'choices' => $attributeChoices,
-                    'empty_value' => '',
                     'multiple' => false,
                     'required' => false,
                     'label' => 'Attribute',
@@ -84,8 +84,6 @@ class SalesTotalByAttributeType extends TimePeriodType
                 'required' => false
             ])
         ;
-
-        parent::buildForm($builder, $options);
     }
 
     /**

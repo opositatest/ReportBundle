@@ -4,6 +4,7 @@ namespace Opos\Bundle\ReportBundle\DataFetcher;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Opos\Bundle\ReportBundle\DataFetchers;
+use Opos\Bundle\ReportBundle\Form\Type\DataFetcher\RegistrationTimePurchaseType;
 use Sylius\Component\Taxation\Model\TaxCategory;
 use Doctrine\ORM\EntityManager;
 
@@ -58,6 +59,6 @@ class RegistrationTimePurchaseDataFetcher extends TimePeriod
      */
     public function getType()
     {
-        return DataFetchers::REGISTRATION_TIME_PURCHASE;
+        return RegistrationTimePurchaseType::class;
     }
 }

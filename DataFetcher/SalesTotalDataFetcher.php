@@ -4,6 +4,7 @@ namespace Opos\Bundle\ReportBundle\DataFetcher;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Opos\Bundle\ReportBundle\DataFetchers;
+use Opos\Bundle\ReportBundle\Form\Type\DataFetcher\SalesTotalType;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Doctrine\ORM\EntityManager;
 
@@ -101,6 +102,6 @@ class SalesTotalDataFetcher extends TimePeriod
      */
     public function getType()
     {
-        return DataFetchers::SALES_TOTAL;
+        return SalesTotalType::class;
     }
 }

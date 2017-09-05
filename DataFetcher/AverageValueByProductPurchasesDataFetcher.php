@@ -5,6 +5,7 @@ namespace Opos\Bundle\ReportBundle\DataFetcher;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Opos\Bundle\ReportBundle\DataFetchers;
+use Opos\Bundle\ReportBundle\Form\Type\DataFetcher\AverageValueByProductPurchasesType;
 
 /**
  * Valor promedio del valor de un tipo de producto de todas las compras completadas
@@ -80,6 +81,6 @@ class AverageValueByProductPurchasesDataFetcher extends TimePeriod
      */
     public function getType()
     {
-        return DataFetchers::AVERAGE_VALUE_BY_PRODUCT_PURCHASES;
+        return AverageValueByProductPurchasesType::class;
     }
 }
