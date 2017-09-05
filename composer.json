@@ -12,14 +12,16 @@
         }
     ],
     "require": {
-        "php": "^5.5.9|^7.0",
+        "php": "^5.6|^7.0",
 
-        "sylius/sylius": "^0.18"
+        "sylius/sylius": "v1.0.0-beta.3",
+        "odiseoteam/odiseo-util-bundle": "^1.0",
+        "odiseoteam/sylius-report-bundle": "dev-master"
     },
     "require-dev": {
         "phpspec/phpspec": "^3.0",
-        "symfony/form": "^2.8",
-        "symfony/validator": "^2.8"
+        "symfony/form": "^3.2",
+        "symfony/validator": "^3.2"
     },
     "config": {
         "bin-dir": "bin"
