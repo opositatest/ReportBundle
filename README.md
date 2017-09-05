@@ -5,7 +5,7 @@ Bundle to show statistics over a project ecommerce with Sylius.
 
 ## Installation
 
-### Step 1: Install Sylius 0.18
+### Step 1: Install Sylius 1.0
 
 ``` bash
 $ wget http://getcomposer.org/composer.phar
@@ -29,7 +29,7 @@ Add manually the following line to the `composer.json` file:
 
 ### Step 3: Enable the bundle
 
-Finally, enable the bundle in the kernel:
+Finally, enable the bundles in the kernel:
 
 ``` php
 <?php
@@ -39,7 +39,8 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new Opos\Bundle\ReportBundle\OposReportBundle(),
+        new \Sylius\Bundle\ReportBundle\SyliusReportBundle(),
+        new \Opos\Bundle\ReportBundle\OposReportBundle(),
     );
 }
 ```
