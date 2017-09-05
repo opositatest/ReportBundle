@@ -28,5 +28,6 @@
     },
     "autoload": {
         "psr-4": { "Opos\\Bundle\\ReportBundle\\": "" }
-    }
+    },
+    "minimum-stability": "dev"
 }
