@@ -16,15 +16,13 @@
 
         "sylius/sylius": "^1.0",
         "odiseoteam/odiseo-util-bundle": "^1.0",
-        "odiseoteam/sylius-report-bundle": "dev-master"
+        "odiseoteam/sylius-report-bundle": "^1.0"
     },
     "require-dev": {
         "phpspec/phpspec": "^3.0",
         "symfony/form": "^3.2",
         "symfony/validator": "^3.2"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "config": {
         "bin-dir": "bin"
     },
