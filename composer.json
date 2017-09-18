@@ -23,6 +23,8 @@
         "symfony/form": "^3.2",
         "symfony/validator": "^3.2"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "config": {
         "bin-dir": "bin"
     },
