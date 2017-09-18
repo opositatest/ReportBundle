@@ -22,14 +22,14 @@ Add manually the following line to the `composer.json` file:
 {
     "require": {
         // ...
-        "opositatest/report-bundle": "dev-master"
+        "opositatest/report-bundle": "^1.0"
     }
 }
 ```
 
 ### Step 3: Enable the bundle
 
-Finally, enable the bundles in the kernel:
+Enable the bundles in the kernel:
 
 ``` php
 <?php
@@ -43,6 +43,16 @@ public function registerBundles()
         new \Opos\Bundle\ReportBundle\OposReportBundle(),
     );
 }
+```
+
+### Step 4: Import routing
+
+Add the routes on app/config/routing.yml:
+
+``` php
+sylius_admin_report:
+    resource: "@SyliusReportBundle/Resources/config/routing.yml"
+    prefix: /admin
 ```
 
 Now, go to the Report menu in the admin and you can choose some news Data Fetchers.
